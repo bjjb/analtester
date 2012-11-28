@@ -97,7 +97,7 @@ require 'minitest/autorun'
       f.puts <<-RUBY
 require 'test_helper'
 
-class #{class_name(file)} < Minitest::Unit::TestCase
+class #{class_name(file)} < MiniTest::Unit::TestCase
   def test_something
     flunk "Write me."
   end
