@@ -1,4 +1,24 @@
 #!/usr/bin/env ruby
-
+require 'optparse'
 require 'analtester'
-Analtester.run
+
+type = :minitest
+OptionParser.new do |o|
+  o.on('-h', '--help', 'Print this message') do
+    puts o.to_s
+    exit(0)
+  end
+  o.on('-V', '--version', 'Show the version number') do
+    puts "Analtester v#{Analtester::VERSION}"
+    exit(0)
+  end
+  o.on('-t', '--type TYPE', 'Choose framework (minitest, minispec, rspec)') do |type|
+    unless %w[minitest minispec rspec].include?(type)
+      puts "Invalid type. Available types are minitest, minispec and rspec)"
+      exit(1)
+    end
+    type = type
+  end
+end.parse!(ARGV)
+
+Analtester.new(type).run

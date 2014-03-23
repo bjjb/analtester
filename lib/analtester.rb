@@ -1,116 +1,133 @@
 # -*- encoding: utf-8 -*-
+require 'pathname'
 require 'fileutils'
+require 'forwardable'
+require 'erb'
 
-class Analtester
+# An Analtester has a directory, and can scan the directory for library files,
+# creating corresponding test files for them. It also makes sure there's a
+# test helper file (like test/), and a make file (like Rakefile).
+class Analtester < Pathname
+  VERSION = "0.0.2"
+
   include FileUtils
-  def self.run
-    new.run
+  include Comparable
+
+  attr_accessor :verbose
+
+  def initialize(framework = :minitest)
+    super('.')
+    send("initialize_#{framework}")
   end
 
-  def initialize(dir = nil)
-    @dir = dir || Dir.pwd
+  def <=>(another)
+    Pathname.new(self).realpath <=> Pathname.new(another).realpath
   end
 
   def run
-    ensure_test_helper
-    tests.each { |test| ensure_test(test) }
-  end
-
-  def testfile(f)
-    self.class.testfile(f)
-  end
-
-  def self.testfile(f)
-    f.sub('lib/', 'test/').sub!(/\.rb/, '_test.rb')
+    make(runner, _runner)
+    make(helper, _helper)
+    tests.each { |test, template| make(test, template) }
   end
 
   def tests
-    libraries.map { |f| testfile(f) }
+    libs.map { |f| [@test.call(f), _test] }
   end
 
-  def libraries
-    Dir["#{@dir}/lib/**/*.rb"]
+  def libs
+    Dir[join(@_libs)].map { |f| join(f) }
   end
 
-  def ensure_test_helper
-    ensure_test_directory
-    print test_helper + " "
-    if File.file?(test_helper)
-      puts "✓"
-    else
-      make_test_helper!
-      puts "Created"
+  def ext
+    @_ext
+  end
+
+  def runner
+    join(@_runner)
+  end
+
+  def _runner
+    templates.join @__runner
+  end
+
+  def helper
+    join @_helper
+  end
+
+  def _helper
+    templates.join @__helper
+  end
+
+  def _test
+    templates.join @_test
+  end
+
+  def templates
+    Pathname.new(__FILE__).parent.parent.join('templates').join(@_templates)
+  end
+
+  def make(target, template)
+    return if target.exist?
+    subject = classify(target)
+    library = library(target)
+    target.parent.mkpath
+    target.open('w') do |f|
+      f << ERB.new(template.read).result(binding)
     end
   end
 
-  def ensure_test_directory
-    print test_dir, " "
-    if File.directory?(test_dir)
-      puts "✓"
-    else
-      make_test_directory!
-      puts "Created"
-    end
+  def translate(s, x, y)
+    s = "#$1#{y}#$2_#{y}#$3" if s.to_s =~ %r{^(.*/?)#{x}(/.*)(\.[^.]+)$}
+    Pathname.new(s)
   end
 
-  def test_helper
-    File.join(test_dir, "test_helper.rb")
+  def library(s)
+    s.to_s.split("#{@_type}/").last.split("_#{@_type}.rb").first
   end
 
-  def make_test_helper!
-    File.open(test_helper, 'w') do |f|
-      f.puts <<-RUBY
-require 'minitest/autorun'
-      RUBY
-    end
+  def classify(s)
+    library(s).split('/').map { |x| camelize(x) }.join('::')
   end
 
-  def ensure_test(file)
-    ensure_directory(File.dirname(file))
-    print file, " "
-    if File.file?(file)
-      puts "✓"
-    else
-      make_test!(file)
-      puts "Created"
-    end
+  def camelize(s)
+    s.split('_').map { |x| x.capitalize }.join('') 
   end
 
-  def ensure_directory(dir)
-    print dir, " "
-    if File.directory?(dir)
-      puts "✓"
-    else
-      mkdir_p(dir)
-      puts "Created"
-    end
+  def initialize_minitest
+    @_type = 'test'
+    @_runner = 'Rakefile'
+    @_helper = 'test/test_helper.rb'
+    @_templates = 'minitest'
+    @__runner = 'Rakefile'
+    @__helper = 'test_helper.rb'
+    @_libs = "lib/**/*.rb"
+    @test = lambda { |f| translate(f, 'lib', 'test') }
+    @_test = 'test.rb'
   end
 
-  def class_name(file)
-    # TODO - modules
-    basename = File.basename(file, File.extname(file))
-    basename.split('_').map { |s| s.chars.first.upcase + s.chars.to_a[1..-1].join }.join
+  def initialize_rspec
+    @_type = 'spec'
+    @_runner = 'Rakefile'
+    @_helper = 'spec/spec_helper.rb'
+    @_templates = 'rspec'
+    @__runner = 'Rakefile'
+    @__helper = 'spec_helper.rb'
+    @_lib = 'lib'
+    @_libs = "lib/**/*.rb"
+    @test = lambda { |f| translate(f, 'lib', 'spec') }
+    @_test = 'spec.rb'
   end
 
-  def make_test!(file)
-    File.open(file, 'w') do |f|
-      f.puts <<-RUBY
-require 'test_helper'
-
-class #{class_name(file)} < MiniTest::Unit::TestCase
-  def test_something
-    flunk "Write me."
-  end
-end
-      RUBY
-    end
-  end
-
-  def make_test_directory!
-    mkdir_p test_dir
-  end
-
-  def test_dir
-    File.join(@dir, "test")
+  def initialize_minispec
+    @_type = 'spec'
+    @_runner = 'Rakefile'
+    @_helper = 'spec/spec_helper.rb'
+    @_templates = 'minispec'
+    @__runner = 'Rakefile'
+    @__helper = 'spec_helper.rb'
+    @_lib = 'lib'
+    @_libs = "lib/**/*.rb"
+    @test = lambda { |f| translate(f, 'lib', 'spec') }
+    @_test = 'spec.rb'
   end
 end

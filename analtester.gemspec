@@ -1,10 +1,11 @@
 # -*- encoding: utf-8 -*-
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+require 'analtester'
 
 Gem::Specification.new do |gem|
   gem.name          = "analtester"
-  gem.version       = "0.0.1"
+  gem.version       = Analtester::VERSION
   gem.authors       = ["JJ Buckley"]
   gem.email         = ["jj@dawandamail.com"]
   gem.description   = %q{Makes some failing tests for you}
@@ -20,4 +21,8 @@ DESCRIPTION
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ["lib"]
+
+  gem.add_dependency 'minitest' if RUBY_VERSION < "2.0"
+  gem.add_development_dependency 'rake'
+  gem.add_development_dependency 'rspec'
 end

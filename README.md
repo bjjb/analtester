@@ -1,6 +1,7 @@
 # Analtester
 
-A silly gem for generating minitest files
+A silly gem for generating minitest files. If you have RSpec, it can use that,
+too.
 
 ## Installation
 
@@ -9,9 +10,11 @@ A silly gem for generating minitest files
 ## Usage
 
     $ cd myproject
-    $ analtest
+    $ analtest -h
 
 That's it.
+
+[![Build Status](https://travis-ci.org/bjjb/analtester.svg?branch=master)](https://travis-ci.org/bjjb/analtester)
 
 ## Contributing
 
