@@ -7,7 +7,7 @@ Gem::Specification.new do |gem|
   gem.name          = "analtester"
   gem.version       = Analtester::VERSION
   gem.authors       = ["JJ Buckley"]
-  gem.email         = ["jj@dawandamail.com"]
+  gem.email         = ["jj@bjjb.org"]
   gem.description   = %q{Makes some failing tests for you}
   gem.summary       = <<DESCRIPTION
 analtester will look through your ./lib directory and create corresponding tests in test/.
@@ -15,7 +15,7 @@ They will all fail, until you write them. Use it to quickly populate an untested
 library with tests. Just run `analtester` from the command-line in your project's root.
 Requires minitest.
 DESCRIPTION
-  gem.homepage      = "http://github.com/jjbuckley/analtester"
+  gem.homepage      = "http://github.com/bjjb/analtester"
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }

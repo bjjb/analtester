@@ -3,6 +3,12 @@
 A silly gem for generating minitest files. If you have RSpec, it can use that,
 too.
 
+analtester will look through your ./lib directory and create corresponding tests in test/.
+They will all fail, until you write them. Use it to quickly populate an untested
+library with tests. Just run `analtester` from the command-line in your project's root.
+
+Requires minitest, unless it doesn't.
+
 ## Installation
 
     $ gem install analtester

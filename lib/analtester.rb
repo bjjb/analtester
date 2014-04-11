@@ -8,7 +8,7 @@ require 'erb'
 # creating corresponding test files for them. It also makes sure there's a
 # test helper file (like test/), and a make file (like Rakefile).
 class Analtester < Pathname
-  VERSION = "0.0.2"
+  VERSION = "0.0.3"
 
   include FileUtils
   include Comparable
