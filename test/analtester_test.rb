@@ -48,8 +48,8 @@ end
     assert_match %r{class Foo::BarTest}, t.read
     out, err = capture_subprocess_io { system("rake") }
     assert_empty err
-    assert_match /2 runs/, out
-    assert_match /2 skips/, out
+    assert_match %r{2 runs}, out
+    assert_match %r{2 skips}, out
   end
 
   def test_minispec
@@ -64,8 +64,8 @@ end
     assert_match %r{describe Foo::Bar}, t.read
     out, err = capture_subprocess_io { system("rake") }
     assert_empty err
-    assert_match /2 runs/, out
-    assert_match /2 skips/, out
+    assert_match %r{2 runs}, out
+    assert_match %r{2 skips}, out
   end
 
   def test_rspec
@@ -80,8 +80,8 @@ end
     assert_match %r{describe Foo::Bar}, t.read
     out, err = capture_subprocess_io { system("rake") }
     assert_empty err
-    assert_match /2 examples/, out
-    assert_match /2 pending/, out
+    assert_match %r{2 examples}, out
+    assert_match %r{2 pending}, out
   end
 
 private

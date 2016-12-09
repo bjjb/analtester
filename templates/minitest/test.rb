@@ -1,7 +1,7 @@
 require 'test_helper'
-require '<%= library %>'
+require '<%= @library %>'
 
-class <%= subject %>Test < Minitest::Test
+class <%= @subject %>Test < Minitest::Test
   def setup
     # Set me up
   end

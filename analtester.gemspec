@@ -24,5 +24,6 @@ DESCRIPTION
 
   gem.add_dependency 'minitest' if RUBY_VERSION < "2.0"
   gem.add_development_dependency 'rake'
+  gem.add_development_dependency 'minitest'
   gem.add_development_dependency 'rspec'
 end

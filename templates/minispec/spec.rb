@@ -1,6 +1,6 @@
 require 'spec_helper'
-require '<%= library %>'
+require '<%= @library %>'
 
-describe <%= subject %> do
+describe <%= @subject %> do
   it "is tested"
 end

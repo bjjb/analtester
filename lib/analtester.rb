@@ -68,8 +68,8 @@ class Analtester < Pathname
 
   def make(target, template)
     return if target.exist?
-    subject = classify(target)
-    library = library(target)
+    @subject = classify(target)
+    @library = library(target)
     target.parent.mkpath
     target.open('w') do |f|
       f << ERB.new(template.read).result(binding)
