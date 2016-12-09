@@ -8,15 +8,16 @@ require 'erb'
 # creating corresponding test files for them. It also makes sure there's a
 # test helper file (like test/), and a make file (like Rakefile).
 class Analtester < Pathname
-  VERSION = "0.0.3"
+  VERSION = "0.1.0"
 
   include FileUtils
   include Comparable
 
   attr_accessor :verbose
 
-  def initialize(framework = :minitest)
+  def initialize(framework = :minitest, &block)
     super('.')
+    yield(self) if block_given?
     send("initialize_#{framework}")
   end
 

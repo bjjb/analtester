@@ -37,6 +37,13 @@ end
     rm_rf @dir
   end
 
+  def test_initialization_with_a_block
+    analtester = Analtester.new do |a|
+      assert_respond_to(a, :tests)
+      assert_kind_of(Analtester, a)
+    end
+  end
+
   def test_minitest
     Analtester.new.run
     assert @dir.join("Rakefile").exist?
